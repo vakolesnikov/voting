@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
+
+import { generateFullName } from "./services";
+
+import './index.css';
 
 class App extends Component {
     state = {
@@ -57,9 +60,9 @@ class App extends Component {
     renderCandidates = () => {
       const { votes, candidates} = this.state;
         return candidates.map((item, index) => (
-          <tr>
+          <tr key={ index }>
               <td>{ index + 1 }</td>
-              <td>Кандидат { index + 1 }</td>
+              <td>{ generateFullName() }</td>
               <td>{item}</td>
               <td>{ ((item/votes) * 100).toFixed(1) || '-' }</td>
           </tr>
