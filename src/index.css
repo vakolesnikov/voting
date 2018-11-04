@@ -2,3 +2,16 @@
     width: 940px;
     margin: 0 auto;
 }
+
+.control-panel {
+    padding-top: 40px;
+}
+
+.winner {
+    color: red;
+}
+
+.winner-item {
+    font-weight: 700;
+    font-size: 16px;
+}

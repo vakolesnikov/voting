@@ -1,28 +1,47 @@
 import React, { Component } from 'react';
 
-import { generateFullName } from "./services";
+import Candidates from './components/candidates';
+import TableHeader from './components/tableHeader';
+import ControlPanel from './components/controlPanel';
+import Modal from './components/modal'
+
+import {generateFullName, maxArrayItem, maxArrayItemIndex} from './services';
+import { CANDIDATES_COUNT, VOTING_TIME } from './config';
 
 import './index.css';
 
 class App extends Component {
     state = {
-        votes: 0,
+        countVote: 0,
         step: 0,
-        candidates: new Array(10).fill(0),
+        candidates: [],
+        isVoting: false,
+        winner: null,
     };
 
-    updateState = () => {
-        const count = 10;
-        const candidates = new Array(count).fill(0);
-        let votes = 0;
+    componentWillMount() {
+        const candidates = new Array(CANDIDATES_COUNT).fill(0).map(() => ({
+               name: generateFullName(),
+               value: 0,
+           }));
 
-        this.clearState();
+        this.setState({
+            candidates,
+        })
+    };
 
+    voting = () => {
+        const newCandidates = this.state.candidates.map(item => ({...item}));
+        let countVote = 0;
         const generateVote = () => {
-            const id = Math.floor(Math.random() * candidates.length);
-            votes += 1;
-            candidates[id] += 1;
+            const id = Math.floor(Math.random() * newCandidates.length);
+            countVote += 1;
+            newCandidates[id].value += 1;
         };
+
+        this.setState({
+            isVoting: true,
+        });
 
         const generateVoteId = setInterval(
             () => {
@@ -31,12 +50,12 @@ class App extends Component {
             10
         );
 
-        const updateState = setInterval(
+        const updateStateId = setInterval(
             () => {
                 this.setState({
-                    votes,
-                    candidates,
-                    step: ++this.state.step,
+                    countVote,
+                    candidates: newCandidates,
+                    step: this.state.step + 1,
                 })
             },
             1000
@@ -44,68 +63,65 @@ class App extends Component {
 
         setTimeout(
             () => {
+                const { candidates } = this.state;
+
                 clearInterval(generateVoteId);
-                clearInterval(updateState);
+                clearInterval(updateStateId);
+
+                const vote = candidates.map(item => item.value);
+                const winner = candidates[maxArrayItemIndex(vote)];
+
+                const newCandidates = candidates.map((item, index) => {
+                   if (index === maxArrayItemIndex(vote)) {
+                       return ({
+                           ...item,
+                           winner: true,
+                       })
+                   }
+
+                   return ({
+                       ...item,
+                   })
+                });
+
+                this.setState({
+                    isVoting: false,
+                    winner,
+                    candidates: newCandidates,
+                })
             },
-            9000
+            VOTING_TIME
         );
     };
 
-    clearState = () => this.setState({
-       votes: 0,
-       step: 0,
-       candidates: new Array(10).fill(0),
-    });
-
-    renderCandidates = () => {
-      const { votes, candidates} = this.state;
-        return candidates.map((item, index) => (
-          <tr key={ index }>
-              <td>{ index + 1 }</td>
-              <td>{ generateFullName() }</td>
-              <td>{item}</td>
-              <td>{ ((item/votes) * 100).toFixed(1) || '-' }</td>
-          </tr>
-        ));
+    startVoting = () => {
+        this.setState({
+            countVote: 0,
+            step: 0,
+            candidates: [...this.state.candidates].map((item) => ({ ...item, value: 0, winner: false })),
+            winner: null,
+        }, () => this.voting());
     };
 
-    renderTableHeader = () => (
-        <thead className="thead-dark">
-        <tr>
-            <th> # </th>
-            <th> Кандидат </th>
-            <th> Количество голосов </th>
-            <th> % голосов </th>
-        </tr>
-        </thead>
-    );
-
-
-
-
     render() {
+        const { candidates, countVote, isVoting, step, winner } = this.state;
+
         return (
           <div className="app">
-              <div>
-                  <table className='table'>
-                      { this.renderTableHeader() }
-                      <tbody className='table-striped'>
-                          { this.renderCandidates() }
-                      </tbody>
-                  </table>
-              </div>
-              <div className='d-flex justify-content-between'>
-                  <button
-                      type="button"
-                      className="btn btn-secondary btn-lg bg-dark"
-                      onClick={ this.updateState }
-                  >
-                      Начать голосование
-                  </button>
-                  <div>
-                      До конца голосования осталось { 9 - this.state.step } сек.
-                  </div>
-              </div>
+              <table className='table'>
+                  <TableHeader />
+                  <Candidates
+                      countVote={ countVote }
+                      candidates={ candidates }
+                  />
+              </table>
+              <ControlPanel
+                  step={ step }
+                  onClick={ this.startVoting }
+                  isDisabled={ isVoting }
+              />
+
+              { winner && <Modal item={ winner } count={ countVote } />}
           </div>
         );
 }
