@@ -11,7 +11,7 @@ class Modal extends Component {
         isOpen: true,
     };
 
-    handleCloseModal = () => this.setState({ isOpen: false })
+    handleCloseModal = () => this.setState({ isOpen: false });
 
     render() {
         const { item, count } = this.props;
@@ -19,15 +19,15 @@ class Modal extends Component {
 
         return (
             <div>
-                <div className={`modal modal-open show ${isOpen ? 'd-block' : ''}`} id="modalWinner">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">
+                <div className={`modal modal-open show ${isOpen ? 'd-block' : ''}`} id='modalWinner'>
+                    <div className='modal-dialog modal-dialog-centered' role='document'>
+                        <div className='modal-content'>
+                            <div className='modal-header'>
+                                <h5 className='modal-title'>
                                     Победитель:
                                 </h5>
                             </div>
-                            <div className="modal-body">
+                            <div className='modal-body'>
                                 <div>
                                     { item.name }
                                 </div>
@@ -35,8 +35,15 @@ class Modal extends Component {
                                     Голоса: { item.value } ({ ((item.value/count) * 100).toFixed(1) }%)
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={ this.handleCloseModal }>Закрыть</button>
+                            <div className='modal-footer'>
+                                <button
+                                    type='button'
+                                    className='btn btn-secondary'
+                                    data-dismiss='modal'
+                                    onClick={ this.handleCloseModal }
+                                >
+                                    Закрыть
+                                </button>
                             </div>
                         </div>
                     </div>

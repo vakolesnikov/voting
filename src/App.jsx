@@ -5,7 +5,7 @@ import TableHeader from './components/tableHeader';
 import ControlPanel from './components/controlPanel';
 import Modal from './components/modal'
 
-import {generateFullName, maxArrayItem, maxArrayItemIndex} from './services';
+import { generateFullName, maxArrayItemIndex } from './services/app';
 import { CANDIDATES_COUNT, VOTING_TIME } from './config';
 
 import './index.css';
@@ -43,23 +43,15 @@ class App extends Component {
             isVoting: true,
         });
 
-        const generateVoteId = setInterval(
-            () => {
-                generateVote();
-            },
-            10
-        );
+        const generateVoteId = setInterval(() => generateVote(),10);
 
-        const updateStateId = setInterval(
-            () => {
-                this.setState({
-                    countVote,
-                    candidates: newCandidates,
-                    step: this.state.step + 1,
-                })
-            },
-            1000
-        );
+        const updateStateId = setInterval(() => {
+            this.setState({
+                countVote,
+                candidates: newCandidates,
+                step: this.state.step + 1,
+            })
+        }, 1000);
 
         setTimeout(
             () => {
@@ -94,20 +86,19 @@ class App extends Component {
         );
     };
 
-    startVoting = () => {
+    startVoting = () =>
         this.setState({
             countVote: 0,
             step: 0,
-            candidates: [...this.state.candidates].map((item) => ({ ...item, value: 0, winner: false })),
+            candidates: [...this.state.candidates].map(item => ({ ...item, value: 0, winner: false })),
             winner: null,
         }, () => this.voting());
-    };
 
     render() {
         const { candidates, countVote, isVoting, step, winner } = this.state;
 
         return (
-          <div className="app">
+          <div className='app'>
               <table className='table'>
                   <TableHeader />
                   <Candidates
