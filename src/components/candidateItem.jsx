@@ -9,7 +9,7 @@ const Candidate = ({item, index, countVote}) => (
 
             {item.winner ? <span className='winner'> (Победитель)</span> : null}</td>
         <td>{item.value}</td>
-        <td>{ item.value ? ((item.value/countVote) * 100).toFixed(1) : 0 }</td>
+        <td>{ item.value ? ((item.value/countVote) * 100).toFixed(1) : 0 }%</td>
     </tr>
 );
 

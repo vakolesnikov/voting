@@ -7,18 +7,19 @@ class Modal extends Component {
         count: PropTypes.number.isRequired,
     };
 
-    componentDidMount() {
-        const modalWinner = window.$('#modalWinner');
+    state = {
+        isOpen: true,
+    };
 
-        modalWinner.modal('show');
-    }
+    handleCloseModal = () => this.setState({ isOpen: false })
 
     render() {
         const { item, count } = this.props;
+        const { isOpen } = this.state;
 
         return (
             <div>
-                <div className="modal fade" id="modalWinner">
+                <div className={`modal modal-open show ${isOpen ? 'd-block' : ''}`} id="modalWinner">
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
@@ -35,7 +36,7 @@ class Modal extends Component {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={ this.handleCloseModal }>Закрыть</button>
                             </div>
                         </div>
                     </div>
